@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>GameHub — Game Launcher</title>
+<style>
+:root{--bg:#080b14;--panel:#101624;--panel2:#151d2d;--text:#f6f8ff;--muted:#9aa6bb;--line:#253047;--accent:#765cff;--accent2:#9a86ff;--good:#35d07f;--danger:#ff5c72}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0%,#1b1740 0,transparent 30%),var(--bg);color:var(--text);font:15px Inter,Segoe UI,Arial,sans-serif}
+button,input,select{font:inherit}.layout{display:flex;min-height:100vh}.side{position:fixed;z-index:10;inset:0 auto 0 0;width:245px;padding:22px 15px;background:#0b0f19eF;border-right:1px solid var(--line);backdrop-filter:blur(15px)}
+.brand{font-size:24px;font-weight:900;margin:5px 12px 34px}.brand b{color:var(--accent)}.nav button{width:100%;border:0;background:transparent;color:#aeb8c9;text-align:left;padding:13px 14px;border-radius:11px;margin:4px 0;cursor:pointer}.nav button:hover,.nav button.active{background:#1b2234;color:white}.side-footer{position:absolute;bottom:20px;color:#66738b;font-size:12px;left:27px}
+.main{margin-left:245px;width:calc(100% - 245px);padding:25px 38px 60px}.top{display:flex;gap:15px;align-items:center}.search{flex:1;max-width:550px;background:var(--panel);border:1px solid var(--line);color:white;padding:12px 15px;border-radius:11px;outline:none}.search:focus{border-color:var(--accent)}.profile-pill{margin-left:auto;background:var(--panel);border:1px solid var(--line);padding:10px 14px;border-radius:11px}
+.page{display:none}.page.active{display:block}.hero{margin-top:25px;border:1px solid var(--line);border-radius:22px;padding:40px;min-height:300px;background:linear-gradient(115deg,#171d34,#101523 55%,#241b43);position:relative;overflow:hidden}.hero:after{content:"🎮";position:absolute;right:45px;top:18px;font-size:190px;opacity:.1}.tag{color:#a89bff;text-transform:uppercase;font-weight:800;letter-spacing:2px;font-size:12px}.hero h1{font-size:48px;line-height:1.05;max-width:650px;margin:12px 0}.hero p{max-width:620px;color:var(--muted);font-size:16px;line-height:1.6}.primary{background:var(--accent);border:1px solid var(--accent);color:white;padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer}.primary:hover{background:var(--accent2)}.secondary{background:#1a2232;border:1px solid var(--line);color:white;padding:12px 18px;border-radius:10px;cursor:pointer}
+.section{margin-top:32px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.section h2{margin:0;font-size:24px}.muted{color:var(--muted)}.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:17px}.chip{border:1px solid var(--line);background:var(--panel);color:#b9c4d6;padding:8px 12px;border-radius:999px;cursor:pointer}.chip.active,.chip:hover{background:#272044;color:white;border-color:#51459b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:17px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;transition:.2s}.card:hover{transform:translateY(-4px);border-color:#43506d}.cover{height:145px;display:grid;place-items:center;font-size:65px;background:linear-gradient(135deg,#202a43,#151a29)}.info{padding:16px}.title-row{display:flex;justify-content:space-between;gap:10px}.info h3{margin:0 0 6px}.heart{border:0;background:transparent;color:#768299;font-size:20px;cursor:pointer}.heart.fav{color:#ff5c9a}.info p{color:var(--muted);font-size:13px;min-height:34px;margin:0 0 14px}.meta{font-size:12px;color:#758197;margin-bottom:12px}.actions{display:flex;gap:8px}.actions button{flex:1;padding:9px;border-radius:8px}.empty{display:none;padding:35px;text-align:center;color:var(--muted)}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:25px}.detail-hero{display:flex;gap:25px;align-items:center}.detail-icon{font-size:90px;width:150px;height:150px;border-radius:18px;display:grid;place-items:center;background:#1b2437}.detail h2{font-size:35px;margin:0 0 8px}.detail p{color:var(--muted);line-height:1.6}.stat-row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.stat{background:#171f2e;border:1px solid var(--line);padding:9px 12px;border-radius:9px;color:#b8c3d4}
+.library-list{display:grid;gap:12px}.library-item{background:var(--panel);border:1px solid var(--line);padding:15px;border-radius:12px;display:flex;align-items:center;gap:14px}.library-item .grow{flex:1}
+.settings{max-width:760px}.setting{background:var(--panel);border:1px solid var(--line);padding:19px;display:flex;justify-content:space-between;align-items:center;border-radius:13px;margin:10px 0}.setting small{display:block;color:var(--muted);margin-top:5px}.switch{width:45px;height:25px;appearance:none;background:#2a3448;border-radius:99px;position:relative;cursor:pointer}.switch:before{content:"";position:absolute;width:19px;height:19px;top:3px;left:3px;border-radius:50%;background:#fff;transition:.2s}.switch:checked{background:var(--accent)}.switch:checked:before{left:23px}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modal-box{width:min(520px,100%);background:#151d2c;border:1px solid #34415a;border-radius:17px;padding:24px;box-shadow:0 25px 70px #0008}.close{float:right;background:none;border:0;color:#9aa6bb;font-size:25px;cursor:pointer}.progress{height:9px;background:#0b101a;border-radius:99px;overflow:hidden;margin:18px 0}.bar{height:100%;width:0;background:var(--accent);transition:width .2s}.toast{position:fixed;right:22px;bottom:22px;background:#202a3b;border:1px solid #3a4861;padding:13px 16px;border-radius:10px;display:none;z-index:60}
+body.light{--bg:#eef1f7;--panel:#fff;--panel2:#fff;--text:#151a25;--muted:#667085;--line:#d9deea}body.light .side{background:#f8f9fcE8}body.light .hero{background:linear-gradient(115deg,#e9e7ff,#f8f9fc)}
+@media(max-width:800px){.side{width:72px;padding:16px 8px}.brand{font-size:0;text-align:center}.brand:first-letter{font-size:25px}.nav button{font-size:0;text-align:center}.nav button:first-letter{font-size:20px}.side-footer{display:none}.main{margin-left:72px;width:calc(100% - 72px);padding:20px}.hero{padding:28px}.hero h1{font-size:36px}.profile-pill{display:none}.detail-hero{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="side">
+  <div class="brand">🎮 Game<b>Hub</b></div>
+  <nav class="nav">
+    <button class="active" data-page="home">🏠 &nbsp; Home</button>
+    <button data-page="discover">✨ &nbsp; Discover</button>
+    <button data-page="library">📚 &nbsp; My Library</button>
+    <button data-page="favorites">⭐ &nbsp; Favorites</button>
+    <button data-page="settings">⚙️ &nbsp; Settings</button>
+  </nav>
+  <div class="side-footer">GameHub v2.0 • Free</div>
+</aside>
+
+<main class="main">
+<header class="top">
+  <input class="search" id="search" placeholder="🔎 Search games, genres...">
+  <div class="profile-pill">👤 <span id="profileName">Player</span></div>
+</header>
+
+<section class="page active" id="home">
+  <div class="hero">
+    <div class="tag">GameHub v2</div>
+    <h1>Your games. One place.</h1>
+    <p>Discover games, build your library, save favorites and keep your gaming collection organized.</p>
+    <button class="primary" onclick="showPage('discover')">Explore Games →</button>
+  </div>
+  <div class="section">
+    <div class="section-head"><h2>🔥 Featured</h2><span class="muted" id="resultCount"></span></div>
+    <div class="grid" id="homeGrid"></div>
+  </div>
+</section>
+
+<section class="page" id="discover">
+  <div class="section-head"><h2>✨ Discover</h2><span class="muted" id="discoverCount"></span></div>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="discoverGrid"></div><div class="empty" id="empty">No games match your search.</div>
+</section>
+
+<section class="page" id="library">
+  <div class="section-head"><h2>📚 My Library</h2><span class="muted" id="libraryCount"></span></div>
+  <div class="library-list" id="libraryList"></div>
+  <p class="muted" id="libraryEmpty">Your library is empty. Download a game demo to add it here.</p>
+</section>
+
+<section class="page" id="favorites">
+  <div class="section-head"><h2>⭐ Favorites</h2><span class="muted">Saved on this device</span></div>
+  <div class="grid" id="favGrid"></div><div class="empty" id="favEmpty">No favorites yet. Tap ☆ on a game card.</div>
+</section>
+
+<section class="page" id="settings">
+  <div class="section-head"><h2>⚙️ Settings</h2></div>
+  <div class="settings">
+    <div class="setting"><div><strong>🌙 Dark mode</strong><small>Use the gaming-style dark interface.</small></div><input class="switch" id="dark" type="checkbox"></div>
+    <div class="setting"><div><strong>🔔 Notifications</strong><small>Show GameHub messages and download updates.</small></div><input class="switch" id="notifications" type="checkbox" checked></div>
+    <div class="setting"><div><strong>👤 Player name</strong><small>Shown in your GameHub profile badge.</small></div><input id="name" style="width:160px;background:var(--bg);color:var(--text);border:1px solid var(--line);padding:9px;border-radius:8px"></div>
+    <div class="setting"><div><strong>🧹 Clear local data</strong><small>Remove favorites, library and saved settings from this browser.</small></div><button class="secondary" onclick="clearData()">Clear</button></div>
+    <button class="primary" onclick="saveSettings()">Save Settings</button>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box">
+<button class="close" onclick="closeModal()">×</button>
+<div id="modalContent"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const games=[
+{name:"Pixel Quest",icon:"🧙",genre:"Adventure",rating:"4.8",size:"240 MB",desc:"Explore a colorful pixel world and uncover hidden secrets."},
+{name:"Neon Racer",icon:"🏎️",genre:"Racing",rating:"4.7",size:"380 MB",desc:"Race through a futuristic city at high speed."},
+{name:"Galaxy Strike",icon:"🚀",genre:"Action",rating:"4.9",size:"510 MB",desc:"Defend the galaxy in this fast-paced space adventure."},
+{name:"Block World",icon:"🧱",genre:"Sandbox",rating:"4.6",size:"620 MB",desc:"Build, explore and create your own little world."},
+{name:"Dungeon Run",icon:"⚔️",genre:"RPG",rating:"4.8",size:"450 MB",desc:"Explore a mysterious dungeon and discover its secrets."},
+{name:"Sky Legends",icon:"🪽",genre:"Fantasy",rating:"4.5",size:"720 MB",desc:"Fly across a magical kingdom and meet legendary heroes."},
+{name:"Cyber Arena",icon:"🤖",genre:"Action",rating:"4.6",size:"390 MB",desc:"Enter a futuristic arena and master your skills."},
+{name:"Puzzle Planet",icon:"🪐",genre:"Puzzle",rating:"4.4",size:"160 MB",desc:"Solve clever puzzles across strange planets."}
+];
+let favorites=JSON.parse(localStorage.getItem("ghFav")||"[]");
+let library=JSON.parse(localStorage.getItem("ghLib")||"[]");
+let settings=JSON.parse(localStorage.getItem("ghSettings")||"{}");
+let activeGenre="All";
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ if(id==="discover")renderDiscover(); if(id==="library")renderLibrary(); if(id==="favorites")renderFavorites();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function card(g){
+ const fav=favorites.includes(g.name);
+ return `<article class="card">
+ <div class="cover">${g.icon}</div><div class="info">
+ <div class="title-row"><h3>${g.name}</h3><button class="heart ${fav?"fav":""}" onclick="toggleFav('${g.name}')">${fav?"★":"☆"}</button></div>
+ <p>${g.desc}</p><div class="meta">${g.genre} • ⭐ ${g.rating} • ${g.size}</div>
+ <div class="actions"><button class="secondary" onclick="details('${g.name}')">Details</button><button class="primary" onclick="downloadGame('${g.name}')">⬇ Get</button></div>
+ </div></article>`;
+}
+function renderHome(){
+ document.getElementById("homeGrid").innerHTML=games.slice(0,6).map(card).join("");
+ document.getElementById("resultCount").textContent=games.length+" games";
+}
+function renderFilters(){
+ const genres=["All",...new Set(games.map(g=>g.genre))];
+ document.getElementById("filters").innerHTML=genres.map(x=>`<button class="chip ${x===activeGenre?"active":""}" onclick="setGenre('${x}')">${x}</button>`).join("");
+}
+function filtered(){
+ const q=document.getElementById("search").value.toLowerCase();
+ return games.filter(g=>(activeGenre==="All"||g.genre===activeGenre)&&(g.name+" "+g.genre+" "+g.desc).toLowerCase().includes(q));
+}
+function renderDiscover(){
+ renderFilters();const list=filtered();
+ document.getElementById("discoverGrid").innerHTML=list.map(card).join("");
+ document.getElementById("discoverCount").textContent=list.length+" results";
+ document.getElementById("empty").style.display=list.length?"none":"block";
+}
+function setGenre(x){activeGenre=x;renderDiscover()}
+function renderLibrary(){
+ const list=games.filter(g=>library.includes(g.name));
+ document.getElementById("libraryCount").textContent=list.length+" games";
+ document.getElementById("libraryList").innerHTML=list.map(g=>`<div class="library-item"><span style="font-size:32px">${g.icon}</span><div class="grow"><strong>${g.name}</strong><div class="muted">${g.genre} • Ready to play</div></div><button class="primary" onclick="play('${g.name}')">▶ Play</button></div>`).join("");
+ document.getElementById("libraryEmpty").style.display=list.length?"none":"block";
+}
+function renderFavorites(){
+ const list=games.filter(g=>favorites.includes(g.name));
+ document.getElementById("favGrid").innerHTML=list.map(card).join("");
+ document.getElementById("favEmpty").style.display=list.length?"none":"block";
+}
+function toggleFav(name){
+ favorites=favorites.includes(name)?favorites.filter(x=>x!==name):[...favorites,name];
+ localStorage.setItem("ghFav",JSON.stringify(favorites));renderHome();renderDiscover();renderFavorites();
+ toast(favorites.includes(name)?"Added to favorites":"Removed from favorites");
+}
+function details(name){
+ const g=games.find(x=>x.name===name);
+ document.getElementById("modalContent").innerHTML=`<div class="detail"><div class="detail-hero"><div class="detail-icon">${g.icon}</div><div><div class="tag">${g.genre}</div><h2>${g.name}</h2><div>⭐ ${g.rating} &nbsp; • &nbsp; ${g.size}</div></div></div><p>${g.desc}</p><div class="stat-row"><span class="stat">🎮 Windows</span><span class="stat">🆓 Demo</span><span class="stat">📦 ${g.size}</span></div><button class="primary" onclick="downloadGame('${g.name}');closeModal()">⬇ Add to Library</button></div>`;
+ openModal();
+}
+function downloadGame(name){
+ if(!library.includes(name)){library.push(name);localStorage.setItem("ghLib",JSON.stringify(library))}
+ let n=0;const g=games.find(x=>x.name===name);
+ document.getElementById("modalContent").innerHTML=`<h2>Downloading ${g.name}</h2><p class="muted">Demo download simulation — no real game file is downloaded yet.</p><div class="progress"><div class="bar" id="bar"></div></div><div id="pct">0%</div>`;
+ openModal();const timer=setInterval(()=>{n+=10;document.getElementById("bar").style.width=n+"%";document.getElementById("pct").textContent=n+"%";if(n>=100){clearInterval(timer);toast(g.name+" added to My Library");renderLibrary()}},130);
+}
+function play(name){
+ document.getElementById("modalContent").innerHTML=`<h2>▶ ${name}</h2><p class="muted">GameHub is ready for the real launcher stage. This browser version cannot directly start an arbitrary Windows .exe.</p><button class="primary" onclick="closeModal()">Okay</button>`;openModal();
+}
+function openModal(){document.getElementById("modal").classList.add("open")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2200)}
+function saveSettings(){
+ settings={dark:document.getElementById("dark").checked,notifications:document.getElementById("notifications").checked,name:document.getElementById("name").value||"Player"};
+ localStorage.setItem("ghSettings",JSON.stringify(settings));applySettings();toast("Settings saved");
+}
+function applySettings(){
+ document.body.classList.toggle("light",settings.dark===false);
+ document.getElementById("dark").checked=settings.dark!==false;
+ document.getElementById("notifications").checked=settings.notifications!==false;
+ document.getElementById("name").value=settings.name||"Player";
+ document.getElementById("profileName").textContent=settings.name||"Player";
+}
+function clearData(){
+ localStorage.removeItem("ghFav");localStorage.removeItem("ghLib");localStorage.removeItem("ghSettings");
+ favorites=[];library=[];settings={};applySettings();renderHome();renderDiscover();renderLibrary();renderFavorites();toast("Local GameHub data cleared");
+}
+document.getElementById("search").addEventListener("input",()=>{renderDiscover();if(document.getElementById("home").classList.contains("active"))renderHome()});
+applySettings();renderHome();renderDiscover();
+</script>
+</body>
+</html>
